@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FIDO2 Developer Test Tool</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            background: #0d1117;
+            color: #e6edf3;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: #58a6ff;
+            border-bottom: 2px solid #21262d;
+            padding-bottom: 10px;
+            margin-bottom: 8px;
+        }
+
+        h1 + p {
+            color: #8b949e;
+            margin-top: 0;
+            margin-bottom: 30px;
+        }
+
+        h3 {
+            color: #7ee787;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        h4 {
+            color: #ffa657;
+            margin: 15px 0 8px 0;
+            font-size: 14px;
+        }
+
+        .section {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .form-row label {
+            min-width: 100px;
+            margin-right: 12px;
+            font-weight: 600;
+            color: #f0f6fc;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 8px 12px;
+            background: #0d1117;
+            border: 1px solid #30363d;
+            color: #e6edf3;
+            border-radius: 6px;
+            font-family: inherit;
+            margin-right: 10px;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #58a6ff;
+        }
+
+        button {
+            background: #238636;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        button:hover {
+            background: #2ea043;
+        }
+
+        button:disabled {
+            background: #484f58;
+            cursor: not-allowed;
+        }
+
+        button.danger {
+            background: #da3633;
+        }
+
+        button.danger:hover {
+            background: #f85149;
+        }
+
+        .status {
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            margin-top: 8px;
+        }
+
+        .json-box {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 12px;
+            margin: 8px 0;
+            white-space: pre-wrap;
+            overflow-x: auto;
+            max-height: 250px;
+            overflow-y: auto;
+            font-size: 12px;
+            color: #e6edf3;
+            word-break: break-all;
+        }
+
+        .endpoint {
+            background: #1f2937;
+            color: #fbbf24;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            margin: 5px 0;
+            border-left: 3px solid #fbbf24;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .auth-types {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0 20px 0;
+        }
+
+        .auth-type {
+            flex: 1;
+            background: #21262d;
+            border: 2px solid #30363d;
+            border-radius: 6px;
+            padding: 12px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .auth-type:hover {
+            border-color: #58a6ff;
+        }
+
+        .auth-type.selected {
+            border-color: #238636;
+            background: #1a2f1a;
+        }
+
+        .auth-type strong {
+            color: #f0f6fc;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .auth-type small {
+            color: #8b949e;
+            font-size: 11px;
+        }
+
+        .options {
+            margin-bottom: 15px;
+        }
+
+        .options > label:first-child {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #f0f6fc;
+        }
+
+        .options label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 13px;
+        }
+
+        input[type="radio"], input[type="checkbox"] {
+            margin-right: 8px;
+        }
+
+        .success { color: #238636; background: #0f2f16; }
+        .error { color: #f85149; background: #2d1011; }
+        .warning { color: #d29922; background: #2d240e; }
+
+        #regStatus, #authStatus {
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        @media (max-width: 1024px) {
+            .grid { grid-template-columns: 1fr; }
+            .auth-types { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>FIDO2 Developer Test Tool</h1>
+    <p>Test WebAuthn with different authenticator types - Request/Response debugger for developers</p>
+    <h2> This client FOR SESSION</h2>
+    <!-- Server Configuration -->
+    <div class="section">
+        <h3>Server Configuration</h3>
+        <div class="form-row">
+            <label>Base URL:</label>
+            <input type="text" id="baseUrl" value="https://dev-fido2auth.mobile-id.vn/fido2/api" placeholder="https://dev-fido2auth.mobile-id.vn/fido2/api">
+            <button onclick="testConnection()">Test Connection</button>
+        </div>
+        <div id="connectionStatus" class="status">Not tested</div>
+        <div class="form-row">
+            <label></label>
+            <label style="display:flex;align-items:center;gap:8px;">
+                <input type="checkbox" id="useWso2" onchange="toggleWso2Fields(this.checked)"> Use WSO2 (Basic auth)
+            </label>
+        </div>
+        <div id="wso2Fields" style="display:none;flex-direction:column;gap:10px;margin-left:112px;">
+            <div class="form-row" style="margin-bottom:0;">
+                <label style="min-width:90px;">API URL:</label>
+                <input type="text" id="wso2ApiUrl" placeholder="https://dev-api.mobile-id.vn/fido2/api" value="https://dev-api.mobile-id.vn/fido2/api">
+            </div>
+            <div class="form-row" style="margin-bottom:0;">
+                <label style="min-width:90px;">Token URL:</label>
+                <input type="text" id="wso2TokenUrl" placeholder="https://dev-sso.mobile-id.vn/realms/mobile-id/protocol/openid-connect/token" value="https://dev-sso.mobile-id.vn/realms/mobile-id/protocol/openid-connect/token">
+            </div>
+            <div class="form-row" style="margin-bottom:0;">
+                <label style="min-width:90px;">Client ID:</label>
+                <input type="text" id="wso2ClientId" placeholder="client_id">
+            </div>
+            <div class="form-row" style="margin-bottom:0;">
+                <label style="min-width:90px;">Client Secret:</label>
+                <input type="text" id="wso2ClientSecret" placeholder="client_secret">
+            </div>
+        </div>
+    </div>
+
+    <!-- User Configuration -->
+    <div class="section">
+        <h3>User Configuration</h3>
+        <div class="form-row">
+            <label>Username:</label>
+            <div style="display:flex;gap:8px;align-items:center;flex:1;">
+                <input type="text" id="username" value="dev@test.com" style="flex:1;">
+                <button type="button" onclick="populateRandomUser('username')">🎲 Random</button>
+            </div>
+        </div>
+        <div class="form-row">
+            <label></label>
+            <label style="display:flex;align-items:center;gap:8px;">
+                <input type="checkbox" id="usernameLess"> Username-less (discoverable)
+            </label>
+        </div>
+        <div class="form-row">
+            <label>Display Name:</label>
+            <div style="display:flex;gap:8px;align-items:center;flex:1;">
+                <input type="text" id="displayName" value="Developer User" style="flex:1;">
+                <button type="button" onclick="populateRandomUser('displayName')">🎲 Random</button>
+            </div>
+        </div>
+        <div class="form-row" style="justify-content:flex-end;">
+            <label></label>
+            <button type="button" onclick="populateRandomUser()">🎯 Randomize Both</button>
+        </div>
+    </div>
+
+    <!-- Authenticator Configuration -->
+    <div class="section">
+        <h3>Authenticator Configuration</h3>
+
+
+        <label><strong>Authenticator Attachment:</strong></label>
+        <div class="auth-types">
+            <div class="auth-type selected" onclick="selectAuthType('platform')" id="platform">
+                <strong>Platform</strong><br>
+                <small>Touch ID, Face ID, Windows Hello</small>
+            </div>
+            <div class="auth-type" onclick="selectAuthType('cross-platform')" id="cross-platform">
+                <strong>Cross-Platform</strong><br>
+                <small>USB/NFC Security Keys</small>
+            </div>
+            <div class="auth-type" onclick="selectAuthType('any')" id="any">
+                <strong>Any</strong><br>
+                <small>Platform or External</small>
+            </div>
+        </div>
+        <div class ="options">
+            <label>
+                <strong> SHARE MODE:</strong>
+                <input type="checkbox" id="sharemode"> Share mode
+
+            </label>
+
+
+        </div>
+
+        <div class="options">
+            <label><strong>User Verification:</strong></label>
+            <label><input type="radio" name="userVerification" value="required"> Required - PIN/Biometric mandatory</label>
+            <label><input type="radio" name="userVerification" value="preferred" checked> Preferred - PIN/Biometric if available</label>
+            <label><input type="radio" name="userVerification" value="discouraged"> Discouraged - No PIN/Biometric</label>
+        </div>
+
+        <div class="options">
+            <label><strong>Attestation:</strong></label>
+            <label><input type="radio" name="attestation" value="none" checked> None - No attestation</label>
+            <label><input type="radio" name="attestation" value="indirect"> Indirect - Anonymized</label>
+            <label><input type="radio" name="attestation" value="direct"> Direct - Full device info</label>
+        </div>
+
+        <div class="options">
+            <label><input type="checkbox" id="requireResidentKey"> Require Resident Key (passwordless)</label>
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="section">
+        <h3>Actions</h3>
+        <button onclick="register()" id="registerBtn">🔐 Register New Credential</button>
+        <button onclick="authenticate()" id="authBtn">✅ Authenticate</button>
+        <button onclick="clearAll()" class="danger">🗑️ Clear All</button>
+    </div>
+
+    <!-- Results -->
+    <div class="grid">
+        <!-- Registration Flow -->
+        <div class="section">
+            <h3>Registration Flow</h3>
+            <div id="regStatus"></div>
+
+            <h4>Step 1: Request Options</h4>
+            <div class="endpoint">POST {baseUrl}/v1/webauthn/attestation/options</div>
+            <div id="regOptionsRequest" class="json-box">Click Register to see request</div>
+
+            <h4>Step 2: Server Options Response</h4>
+            <div id="regOptionsResponse" class="json-box">Server response will appear here</div>
+
+            <h4>Step 3: WebAuthn Credential Created</h4>
+            <div id="regCredential" class="json-box">WebAuthn credential will appear here</div>
+
+            <h4>Step 4: Submit Result</h4>
+            <div class="endpoint">POST {baseUrl}/v1/webauthn/attestation/result</div>
+            <div id="regResultRequest" class="json-box">Credential submission request</div>
+
+            <h4>Step 5: Final Response</h4>
+            <div id="regResultResponse" class="json-box">Final server response</div>
+        </div>
+
+        <!-- Authentication Flow -->
+        <div class="section">
+            <h3>Authentication Flow</h3>
+            <div id="authStatus"></div>
+
+            <h4>Step 1: Request Options</h4>
+            <div class="endpoint">POST {baseUrl}/v1/webauthn/assertion/options</div>
+            <div id="authOptionsRequest" class="json-box">Click Authenticate to see request</div>
+
+            <h4>Step 2: Server Options Response</h4>
+            <div id="authOptionsResponse" class="json-box">Server response will appear here</div>
+
+            <h4>Step 3: WebAuthn Assertion</h4>
+            <div id="authAssertion" class="json-box">WebAuthn assertion will appear here</div>
+
+            <h4>Step 4: Submit Result</h4>
+            <div class="endpoint">POST {baseUrl}/v1/webauthn/assertion/result</div>
+            <div id="authResultRequest" class="json-box">Assertion submission request</div>
+
+            <h4>Step 5: Final Response</h4>
+            <div id="authResultResponse" class="json-box">Final server response</div>
+        </div>
+    </div>
+
+    <!-- Debug Log -->
+    <div class="section">
+        <h3>Debug Log</h3>
+        <button onclick="clearLog()">Clear Log</button>
+        <div id="debugLog" class="json-box" style="max-height: 150px;">Debug messages will appear here...\n</div>
+    </div>
+</div>
+
+<script>
+    // Global state
+    let currentAuthType = 'platform';
+    let fido2Client = null;
+    let wso2AccessToken = null;
+    let wso2TokenExpiry = null;
+
+    // Utility functions
+    function arrayBufferToBase64url(buffer) {
+        const bytes = new Uint8Array(buffer);
+        let binary = '';
+        for (let i = 0; i < bytes.byteLength; i++) {
+            binary += String.fromCharCode(bytes[i]);
+        }
+        const base64 = btoa(binary);
+        return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+    }
+
+    function stringToArrayBuffer(str) {
+        // Convert string to ArrayBuffer (UTF-8 encoding)
+        const encoder = new TextEncoder();
+        return encoder.encode(str).buffer;
+    }
+
+    function base64urlToArrayBuffer(base64url) {
+        // Convert base64url to base64
+        let base64 = base64url.replace(/-/g, '+').replace(/_/g, '/');
+
+        // Add proper padding
+        while (base64.length % 4) {
+            base64 += '=';
+        }
+
+        try {
+            const binary = atob(base64);
+            const buffer = new ArrayBuffer(binary.length);
+            const view = new Uint8Array(buffer);
+            for (let i = 0; i < binary.length; i++) {
+                view[i] = binary.charCodeAt(i);
+            }
+            return buffer;
+        } catch (error) {
+            console.error('Base64 decode error:', error);
+            console.error('Input:', base64url);
+            console.error('Converted:', base64);
+            throw new Error(`Failed to decode base64url: ${error.message}`);
+        }
+    }
+
+    function smartDecode(value) {
+        // Try to detect if it's base64url or plain string
+        // Base64url only contains: A-Z, a-z, 0-9, -, _
+        const base64urlRegex = /^[A-Za-z0-9_-]+$/;
+
+        if (base64urlRegex.test(value) && value.length > 10) {
+            // Looks like base64url, try to decode
+            try {
+                return base64urlToArrayBuffer(value);
+            } catch (error) {
+                log(`⚠️ Failed to decode as base64url, treating as plain string: ${value}`);
+                return stringToArrayBuffer(value);
+            }
+        } else {
+            // Plain string
+            log(`ℹ️ Treating as plain string: ${value}`);
+            return stringToArrayBuffer(value);
+        }
+    }
+
+    function log(message) {
+        const logElement = document.getElementById('debugLog');
+        const timestamp = new Date().toLocaleTimeString();
+        logElement.textContent += `[${timestamp}] ${message}\n`;
+        logElement.scrollTop = logElement.scrollHeight;
+    }
+
+    function clearLog() {
+        document.getElementById('debugLog').textContent = 'Debug messages will appear here...\n';
+    }
+
+    function displayJson(elementId, data, label = '') {
+        const element = document.getElementById(elementId);
+        if (data) {
+            element.textContent = (label ? `${label}\n` : '') + JSON.stringify(data, null, 2);
+        }
+    }
+
+    function setStatus(elementId, message, type = 'info') {
+        const element = document.getElementById(elementId);
+        element.textContent = message;
+        element.className = `status ${type}`;
+    }
+
+    function generateRandomUsername() {
+        const stamp = Date.now().toString(36);
+        const rand = Math.floor(Math.random() * 1e6).toString(36);
+        return `user-${stamp}-${rand}@demo.test`;
+    }
+
+    function generateRandomDisplayName() {
+        const adjectives = ['Swift','Brisk','Calm','Bright','Clever','Brave','Nimble','Quick'];
+        const animals = ['Falcon','Otter','Lion','Fox','Hawk','Dolphin','Panda','Tiger'];
+        const adj = adjectives[Math.floor(Math.random() * adjectives.length)];
+        const animal = animals[Math.floor(Math.random() * animals.length)];
+        const suffix = Math.floor(Math.random() * 900 + 100);
+        return `${adj} ${animal} ${suffix}`;
+    }
+
+    function populateRandomUser(target) {
+        const unameField = document.getElementById('username');
+        const dnameField = document.getElementById('displayName');
+        const shouldSetUsername = target === 'username' || !target;
+        const shouldSetDisplay = target === 'displayName' || !target;
+
+        if (shouldSetUsername && !document.getElementById('usernameLess').checked) {
+            unameField.value = generateRandomUsername();
+        }
+        if (shouldSetDisplay) {
+            dnameField.value = generateRandomDisplayName();
+        }
+    }
+
+    function toggleWso2Fields(enabled) {
+        document.getElementById('wso2Fields').style.display = enabled ? 'flex' : 'none';
+    }
+
+    async function getWso2AccessToken() {
+        // Check if token is still valid
+        if (wso2AccessToken && wso2TokenExpiry && new Date().getTime() < wso2TokenExpiry) {
+            return wso2AccessToken;
+        }
+
+        const clientId = document.getElementById('wso2ClientId').value.trim();
+        const clientSecret = document.getElementById('wso2ClientSecret').value.trim();
+        const tokenUrl = document.getElementById('wso2TokenUrl').value.trim();
+
+        if (!clientId || !clientSecret || !tokenUrl) {
+            throw new Error('WSO2 enabled but client_id, client_secret, or token URL is missing');
+        }
+
+        try {
+            const basicAuth = btoa(`${clientId}:${clientSecret}`);
+            const response = await fetch(tokenUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Authorization': `Basic ${basicAuth}`
+                },
+                body: 'grant_type=client_credentials'
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Token request failed with status ${response.status}: ${errorText}`);
+            }
+
+            const data = await response.json();
+            wso2AccessToken = data.access_token;
+
+            // Set expiry time (typically expires_in is in seconds, use 90% of that)
+            if (data.expires_in) {
+                wso2TokenExpiry = new Date().getTime() + (data.expires_in * 1000 * 0.9);
+            }
+
+            log(`✅ WSO2: Got access token (expires in ${data.expires_in} seconds)`);
+            return wso2AccessToken;
+        } catch (error) {
+            log(`❌ WSO2: Failed to get access token: ${error.message}`);
+            throw error;
+        }
+    }
+
+    async function buildWso2Headers() {
+        if (!document.getElementById('useWso2').checked) {
+            return {};
+        }
+
+        try {
+            const token = await getWso2AccessToken();
+            return { Authorization: `Bearer ${token}` };
+        } catch (error) {
+            log(`⚠️ ${error.message}`);
+            return {};
+        }
+    }
+
+    // FIDO2 Conformance Test Client
+    class FIDO2ConformanceClient {
+        constructor(baseUrl) {
+            // Use WSO2 API URL if WSO2 is enabled
+            if (document.getElementById('useWso2').checked) {
+                this.baseUrl = document.getElementById('wso2ApiUrl').value.trim();
+                log(`🔄 Using WSO2 API URL: ${this.baseUrl}`);
+            } else {
+                this.baseUrl = baseUrl;
+            }
+        }
+
+        async makeRequest(endpoint, data, headers = {}) {
+            const url = `${this.baseUrl}${endpoint}`;
+            log(`→ ${endpoint}: ${JSON.stringify(data, null, 2)}`);
+
+            const response = await fetch(url, {
+                method: 'POST',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json', ...headers },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+            log(`← ${endpoint} (${response.status}): ${JSON.stringify(result, null, 2)}`);
+
+            // Check conformance API response format
+            if (result.status === 'failed') {
+                throw new Error(result.errorMessage || 'Unknown server error');
+            }
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+
+            return result;
+        }
+
+        async testConnection() {
+            try {
+                // Test with a simple GET request to base URL
+                const response = await fetch(`${this.baseUrl}/`, { method: 'GET' });
+                return response.ok || response.status === 404 || response.status === 405; // 405 Method Not Allowed is also OK
+            } catch (error) {
+                log(`Connection test failed: ${error.message}`);
+                return false;
+            }
+        }
+    }
+
+    // UI Functions
+    function selectAuthType(type) {
+        currentAuthType = type;
+        document.querySelectorAll('.auth-type').forEach(el => el.classList.remove('selected'));
+        document.getElementById(type).classList.add('selected');
+        log(`Selected authenticator type: ${type}`);
+    }
+
+    function getConfiguration() {
+        const userVerification = document.querySelector('input[name="userVerification"]:checked').value;
+        const attestation = document.querySelector('input[name="attestation"]:checked').value;
+        const requireResidentKey = document.getElementById('requireResidentKey').checked;
+
+        let authenticatorAttachment = undefined;
+        if (currentAuthType === 'platform') authenticatorAttachment = 'platform';
+        else if (currentAuthType === 'cross-platform') authenticatorAttachment = 'cross-platform';
+
+        return {
+            authenticatorAttachment,
+            userVerification,
+            attestation,
+            requireResidentKey
+        };
+    }
+
+    async function testConnection() {
+        const baseUrl = document.getElementById('baseUrl').value;
+        const button = event.target;
+
+        button.disabled = true;
+        button.textContent = 'Testing...';
+
+        try {
+            fido2Client = new FIDO2ConformanceClient(baseUrl);
+            const headers = await buildWso2Headers();
+            const connected = await fido2Client.testConnection(headers);
+
+            if (connected) {
+                setStatus('connectionStatus', '✅ Connected successfully', 'success');
+                log('✅ Server connection test passed');
+            } else {
+                setStatus('connectionStatus', '❌ Connection failed', 'error');
+                log('❌ Server connection test failed');
+            }
+        } catch (error) {
+            setStatus('connectionStatus', `❌ Error: ${error.message}`, 'error');
+            log(`❌ Connection error: ${error.message}`);
+        } finally {
+            button.disabled = false;
+            button.textContent = 'Test Connection';
+        }
+    }
+
+    async function register() {
+        const username = document.getElementById('username').value;
+        const displayName = document.getElementById('displayName').value;
+        const baseUrl = document.getElementById('baseUrl').value;
+        const shareMode = document.getElementById('sharemode').checked;
+        const config = getConfiguration();
+
+        if (!username) {
+            setStatus('regStatus', '❌ Please fill username and display name', 'error');
+            return;
+        }
+
+        if (!fido2Client) {
+            fido2Client = new FIDO2ConformanceClient(baseUrl);
+        }
+
+        const button = document.getElementById('registerBtn');
+        button.disabled = true;
+        button.textContent = '⏳ Registering...';
+
+        // Clear previous results
+        ['regOptionsRequest', 'regOptionsResponse', 'regCredential', 'regResultRequest', 'regResultResponse'].forEach(id => {
+            document.getElementById(id).textContent = 'Processing...';
+        });
+
+        setStatus('regStatus', '🔄 Starting registration process...', 'warning');
+
+        let headers;
+        try {
+            // Step 1: Request options - conform to ServerPublicKeyCredentialCreationOptionsRequest
+            var optionsRequest = {
+                username: username,
+            };
+            if (displayName) {
+                optionsRequest.displayName = displayName;
+
+            }
+
+
+            // Add optional fields based on configuration
+            if (config.authenticatorAttachment || config.userVerification !== 'preferred' || config.requireResidentKey) {
+                optionsRequest.authenticatorSelection = {};
+                if (config.authenticatorAttachment) {
+                    optionsRequest.authenticatorSelection.authenticatorAttachment = config.authenticatorAttachment;
+                }
+                if (config.userVerification !== 'preferred') {
+                    optionsRequest.authenticatorSelection.userVerification = config.userVerification;
+                }
+                if (config.requireResidentKey) {
+                    optionsRequest.authenticatorSelection.requireResidentKey = config.requireResidentKey;
+                }
+            }
+
+            if (config.attestation !== 'none') {
+                optionsRequest.attestation = config.attestation;
+            }
+            optionsRequest.registerProps = JSON.stringify({
+                "lastName": "Doe",
+                "firstName": "John",
+                "forwardParams": [
+                    "firstName",
+                    "lastName"
+                ],
+            });
+            headers = {
+                'x-share-mode': shareMode ? 'true' : 'false',
+                ...await buildWso2Headers()
+            };
+            // optionsRequest.registerProps = "eyJ0eXAiOiJKV1QiLCJraWQiOiJmaWRvLXRva2VuIiwiYWxnIjoiUlMyNTYifQ.eyJpc3MiOiJsb2NhbGhvc3QiLCJhdWQiOiJmaWRvLWNsaWVudCIsImV4cCI6MTc2MjQxODA2NywianRpIjoiN2NhYzA4ZTYtZGUwZi00NDMxLTg0MmQtOTZlNDgxMGY3ZmEzIiwiaWF0IjoxNzYyNDE3NzY3LCJuYmYiOjE3NjI0MTc3NjcsInByb3ZpZGVySWQiOiJmaWRvLXNlcnZlci0xIiwiZmlkb0lkIjoiNllRc0FRNkoxWE9qekVoQlZBQ3U0ZyIsInNpZ25Db3VudCI6MCwiZGV2aWNlTmFtZSI6IldpbmRvd3MgUEMiLCJkZXZpY2VUeXBlIjoicGxhdGZvcm0iLCJtZXRhZGF0YSI6IntcImxhc3ROYW1lXCI6XCJEb2VcIixcImZpcnN0TmFtZVwiOlwiSm9oblwiLFwiZm9yd2FyZFBhcmFtc1wiOltcInVzZXJuYW1lXCIsXCJmaXJzdE5hbWVcIixcImxhc3ROYW1lXCJdLFwidXNlcm5hbWVcIjpcInBoYXRuZFwifSJ9.c-rRn8NqFM7p3Bu_BTUxS8sGQg3m4R0fnyByRmEf5UWNKdn4SipNNuYlOdg3PtUl2ivWiSCt7iJeiOYFG_X583C1XAYoy5scEorbIna2E__SgqLhqFPYMvc40xqZr-PE7bnvfQOWXrut6gUMuNE06Quf94oJiUfAPYWIlwRKyLCGMIiJ73i5XDmfDwa6BEfqgQ6kNIpotIDlxCCHeHhcqIBBpUtAIiwucHDhzQFDlod_9X-4G2Wu6g38B-r1F0HxeIQ6NvMi7cjkWxpY0WIyDvt0Cjz5bOvvth2o1fLt_NHLG3YZ9L8NxpNFTCQp7wWirrGLk5EKpxN24QI0e-h9kQ"
+            displayJson('regOptionsRequest', optionsRequest);
+            log('🚀 Step 1: Requesting registration options (Conformance API)');
+
+            const options = await fido2Client.makeRequest('/v1/webauthn/attestation/options', optionsRequest, headers);
+            displayJson('regOptionsResponse', options);
+            log('✅ Step 1: Got registration options');
+
+            // Step 2: Create WebAuthn credential
+            // Debug log the values we're trying to decode
+            log(`🔍 Debug - Challenge: ${options.challenge}`);
+            log(`🔍 Debug - User ID: ${options.user.id}`);
+
+            const webAuthnOptions = {
+                rp: options.rp,
+                user: {
+                    ...options.user,
+                    id: smartDecode(options.user.id)
+                },
+                challenge: base64urlToArrayBuffer(options.challenge),
+                pubKeyCredParams: options.pubKeyCredParams,
+                timeout: options.timeout,
+                excludeCredentials: options.excludeCredentials?.map(cred => ({
+                    ...cred,
+                    id: base64urlToArrayBuffer(cred.id)
+                })),
+                authenticatorSelection: options.authenticatorSelection,
+                attestation: options.attestation
+            };
+
+            // Log the webAuthn options (without ArrayBuffers)
+            const debugOptions = {
+                ...webAuthnOptions,
+                user: {...webAuthnOptions.user, id: '[ArrayBuffer]'},
+                challenge: '[ArrayBuffer]',
+                excludeCredentials: webAuthnOptions.excludeCredentials?.map(c => ({...c, id: '[ArrayBuffer]'}))
+            };
+            log(`🔍 Debug - WebAuthn Options: ${JSON.stringify(debugOptions, null, 2)}`);
+
+            log('🔐 Step 2: Creating WebAuthn credential');
+            const credential = await navigator.credentials.create({publicKey: webAuthnOptions});
+
+            if (!credential) {
+                throw new Error('Failed to create credential');
+            }
+
+            const credentialForDisplay = {
+                type: credential.type,
+                id: credential.id,
+                response: {
+                    clientDataJSON: '[ArrayBuffer]',
+                    attestationObject: '[ArrayBuffer]'
+                }
+            };
+            displayJson('regCredential', credentialForDisplay);
+            log('✅ Step 2: WebAuthn credential created');
+
+            // Step 3: Submit result - conform to ServerPublicKeyCredential with ServerAuthenticatorAttestationResponse
+            const serverCredential = {
+                type: credential.type,
+                id: credential.id,
+                rawId: arrayBufferToBase64url(credential.rawId),
+                response: {
+                    clientDataJSON: arrayBufferToBase64url(credential.response.clientDataJSON),
+                    attestationObject: arrayBufferToBase64url(credential.response.attestationObject)
+                },
+                getClientExtensionResults: credential.getClientExtensionResults()
+            };
+
+            displayJson('regResultRequest', serverCredential);
+            log('📤 Step 3: Submitting credential to server (Conformance API)');
+
+            const result = await fido2Client.makeRequest('/v1/webauthn/attestation/result', serverCredential);
+            displayJson('regResultResponse', result);
+
+            setStatus('regStatus', '✅ Registration completed successfully!', 'success');
+            log('✅ Step 4: Registration completed successfully');
+
+        } catch (error) {
+            setStatus('regStatus', `❌ Registration failed: ${error.message}`, 'error');
+            log(`❌ Registration failed: ${error.message}`);
+
+            // Display error in the last active step
+            const errorMsg = `Error: ${error.message}`;
+            if (!document.getElementById('regOptionsResponse').textContent.includes('{')) {
+                document.getElementById('regOptionsResponse').textContent = errorMsg;
+            } else if (!document.getElementById('regCredential').textContent.includes('{')) {
+                document.getElementById('regCredential').textContent = errorMsg;
+            } else {
+                document.getElementById('regResultResponse').textContent = errorMsg;
+            }
+        } finally {
+            button.disabled = false;
+            button.textContent = '🔐 Register New Credential';
+        }
+    }
+
+
+
+    async function authenticate() {
+        const username = document.getElementById('username').value.trim();
+        const unameLess = document.getElementById('usernameLess').checked;
+        const baseUrl = document.getElementById('baseUrl').value;
+        const config = getConfiguration();
+        const shareMode = document.getElementById('sharemode').checked;
+
+        if (!fido2Client) {
+            fido2Client = new FIDO2ConformanceClient(baseUrl);
+        }
+
+        const button = document.getElementById('authBtn');
+        button.disabled = true;
+        button.textContent = '⏳ Authenticating...';
+
+        // Clear previous results
+        ['authOptionsRequest','authOptionsResponse','authAssertion','authResultRequest','authResultResponse']
+            .forEach(id => { document.getElementById(id).textContent = 'Processing...'; });
+
+        setStatus('authStatus', '🔄 Starting authentication process...', 'warning');
+
+        try {
+            let headers;
+            // ✅ Username-less: không gửi username (hoặc để trống) → allowCredentials=[] phía server
+            const optionsRequest = {};
+            if (!unameLess && username) {
+                optionsRequest.username = username;
+            }
+            if (config.userVerification !== 'preferred') {
+                optionsRequest.userVerification = config.userVerification;
+            }
+            optionsRequest.loginProps = JSON.stringify({
+                "lastName": "Doe",
+                "firstName": "John",
+                "forwardParams": [
+                    "firstName",
+                    "lastName"
+                ],
+            });
+            displayJson('authOptionsRequest', optionsRequest);
+            log('🚀 Step 1: Requesting authentication options (Conformance API)');
+            headers = {
+                'x-share-mode': shareMode ? 'true' : 'false',
+                ...await buildWso2Headers()
+            };
+            const options = await fido2Client.makeRequest('/v1/webauthn/assertion/options', optionsRequest,headers);
+            displayJson('authOptionsResponse', options);
+            log('✅ Step 1: Got authentication options');
+
+            // WebAuthn get() – nếu username-less, allowCredentials sẽ rỗng để OS gợi ý passkey
+            const webAuthnOptions = {
+                challenge: base64urlToArrayBuffer(options.challenge),
+                timeout: options.timeout,
+                rpId: options.rpId,
+                allowCredentials: options.allowCredentials?.map(cred => ({
+                    ...cred,
+                    id: base64urlToArrayBuffer(cred.id)
+                })),
+                userVerification: options.userVerification
+            };
+
+            log('🔐 Step 2: Getting WebAuthn assertion');
+            const credential = await navigator.credentials.get({ publicKey: webAuthnOptions });
+            if (!credential) throw new Error('Failed to get credential');
+
+            const assertionForDisplay = {
+                type: credential.type,
+                id: credential.id,
+                response: {
+                    clientDataJSON: '[ArrayBuffer]',
+                    authenticatorData: '[ArrayBuffer]',
+                    signature: '[ArrayBuffer]',
+                    userHandle: credential.response.userHandle ? '[ArrayBuffer]' : null
+                }
+            };
+            displayJson('authAssertion', assertionForDisplay);
+            log('✅ Step 2: WebAuthn assertion retrieved');
+
+            const serverCredential = {
+                type: credential.type,
+                id: credential.id,
+                rawId: arrayBufferToBase64url(credential.rawId),
+                response: {
+                    clientDataJSON: arrayBufferToBase64url(credential.response.clientDataJSON),
+                    authenticatorData: arrayBufferToBase64url(credential.response.authenticatorData),
+                    signature: arrayBufferToBase64url(credential.response.signature),
+                    userHandle: credential.response.userHandle ? arrayBufferToBase64url(credential.response.userHandle) : ""
+                },
+                getClientExtensionResults: credential.getClientExtensionResults()
+            };
+
+            displayJson('authResultRequest', serverCredential);
+            log('📤 Step 3: Submitting assertion to server (Conformance API)');
+
+            const result = await fido2Client.makeRequest('/v1/webauthn/assertion/result', serverCredential);
+            displayJson('authResultResponse', result);
+
+            setStatus('authStatus', '✅ Authentication completed successfully!', 'success');
+            log('✅ Step 4: Authentication completed successfully');
+
+        } catch (error) {
+            setStatus('authStatus', `❌ Authentication failed: ${error.message}`, 'error');
+            log(`❌ Authentication failed: ${error.message}`);
+            const errorMsg = `Error: ${error.message}`;
+            if (!document.getElementById('authOptionsResponse').textContent.includes('{')) {
+                document.getElementById('authOptionsResponse').textContent = errorMsg;
+            } else if (!document.getElementById('authAssertion').textContent.includes('{')) {
+                document.getElementById('authAssertion').textContent = errorMsg;
+            } else {
+                document.getElementById('authResultResponse').textContent = errorMsg;
+            }
+        } finally {
+            button.disabled = false;
+            button.textContent = '✅ Authenticate';
+        }
+    }
+
+    function clearAll() {
+        // Clear all result displays
+        ['regOptionsRequest', 'regOptionsResponse', 'regCredential', 'regResultRequest', 'regResultResponse',
+            'authOptionsRequest', 'authOptionsResponse', 'authAssertion', 'authResultRequest', 'authResultResponse'].forEach(id => {
+            const element = document.getElementById(id);
+            element.textContent = id.includes('reg') ? 'Click Register to see request' : 'Click Authenticate to see request';
+        });
+
+        // Clear status
+        setStatus('regStatus', '');
+        setStatus('authStatus', '');
+
+        // Clear log
+        clearLog();
+
+        log('🗑️ All data cleared');
+    }
+
+    // Make functions globally available
+    window.selectAuthType = selectAuthType;
+    window.testConnection = testConnection;
+    window.register = register;
+    window.authenticate = authenticate;
+    window.clearAll = clearAll;
+    window.clearLog = clearLog;
+
+    // Initialize on load
+    document.addEventListener('DOMContentLoaded', () => {
+        log('🚀 FIDO2 Developer Test Tool initialized');
+        log('💡 Configure your settings above and test the connection first');
+
+        // Update endpoint displays with current base URL
+        document.querySelectorAll('.endpoint').forEach(el => {
+            el.textContent = el.textContent.replace('{baseUrl}', document.getElementById('baseUrl').value);
+        });
+
+        // Update endpoint displays when base URL changes
+        document.getElementById('baseUrl').addEventListener('input', (e) => {
+            document.querySelectorAll('.endpoint').forEach(el => {
+                const text = el.textContent;
+                const newText = text.replace(/https?:\/\/[^\/]+(?::\d+)?(?:\/[^\/\s]*)*/, e.target.value);
+                el.textContent = newText;
+            });
+        });
+
+        populateRandomUser();
+    });
+</script>
+</body>
+</html>
+
