@@ -832,11 +832,13 @@
                 },
                 getClientExtensionResults: credential.getClientExtensionResults()
             };
-
+headers = {
+                ...await buildWso2Headers()
+            };
             displayJson('regResultRequest', serverCredential);
             log('📤 Step 3: Submitting credential to server (Conformance API)');
 
-            const result = await fido2Client.makeRequest('/v1/webauthn/attestation/result', serverCredential);
+            const result = await fido2Client.makeRequest('/v1/webauthn/attestation/result', serverCredential,headers);
             displayJson('regResultResponse', result);
 
             setStatus('regStatus', '✅ Registration completed successfully!', 'success');
@@ -956,8 +958,10 @@
 
             displayJson('authResultRequest', serverCredential);
             log('📤 Step 3: Submitting assertion to server (Conformance API)');
-
-            const result = await fido2Client.makeRequest('/v1/webauthn/assertion/result', serverCredential);
+        headers = {
+                ...await buildWso2Headers()
+            };
+            const result = await fido2Client.makeRequest('/v1/webauthn/assertion/result', serverCredential,headers);
             displayJson('authResultResponse', result);
 
             setStatus('authStatus', '✅ Authentication completed successfully!', 'success');
