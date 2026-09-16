@@ -19,7 +19,6 @@ Currently working at **Mobile-ID Technologies and Services**, where I develop en
 
 *   **FIDO2/WebAuthn Authentication System:** Engineered a production-grade passwordless authentication server using Java 21 and Jakarta EE. Officially achieved **FIDO2® Server Certification** from the FIDO Alliance. Features multi-tenant architecture, FIDO MDS3 integration, and MariaDB stored procedures.
 *   **IoT Event-Driven Microservice:** Built a highly concurrent Spring Boot 3.4 microservice bridging payment partners and IoT devices (Sound Box, PalmPay) via Apache Kafka and MQTT (EMQX). Implemented robust timeout mechanisms and backpressure handling.
-*   
 ###  Let's Connect
 
 *   **Email:** huynhnhatlinh1206@gmail.com
