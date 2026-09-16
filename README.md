@@ -1,6 +1,6 @@
 # Hi there , I'm Huynh Nhat Linh (LingDev03)
 
-** Full Stack / Java Backend Developer | Ho Chi Minh City, Vietnam**
+**Full Stack / Java Backend Developer | Ho Chi Minh City, Vietnam**
 
 I build high-concurrency backend systems, event-driven microservices, and secure authentication solutions. Passionate about applying AI-driven development tools (Cursor, Claude) to accelerate software engineering.
 
