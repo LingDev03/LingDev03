@@ -1,48 +1,103 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Linh-HN</title>
+    <meta name="description" content="Portfolio của Huynh Nhat Linh — Full Stack và Java Backend Developer tại Thành phố Hồ Chí Minh.">
+    <title>Huynh Nhat Linh — Developer Portfolio</title>
     <link rel="stylesheet" href="style/styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        :root { --ink: #111827; --muted: #64748b; --line: #e2e8f0; --accent: #4f46e5; --accent-2: #06b6d4; }
+        * { scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; color: var(--ink); background: #f8fafc; }
+        body::before, body::after { display: none; }
+        .navbar { background: rgba(248, 250, 252, .86); border-bottom: 1px solid rgba(226,232,240,.8); }
+        .nav-logo { font-family: 'Space Grotesk', sans-serif; letter-spacing: -.04em; }
+        .nav-menu { gap: 1.5rem; }
+        .nav-menu a { font-size: .9rem; }
+        .hero { min-height: 680px; height: auto; padding: 150px 0 110px; background: radial-gradient(circle at 80% 20%, rgba(6,182,212,.2), transparent 32%), linear-gradient(135deg, #111827 0%, #1e1b4b 56%, #312e81 100%); }
+        .hero::before { opacity: .55; }
+        .hero-container { position: relative; z-index: 1; }
+        .eyebrow { display: inline-flex; align-items: center; gap: .55rem; color: #67e8f9; font-size: .85rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 1.25rem; }
+        .eyebrow::before { content: ''; width: 28px; height: 2px; background: #67e8f9; }
+        .hero-content h1 { font-family: 'Space Grotesk', sans-serif; font-size: clamp(2.7rem, 6vw, 5rem); line-height: 1.04; margin-bottom: 1.25rem; }
+        .highlight { color: #67e8f9; }
+        .hero-content h2 { color: #c4b5fd; font-size: 1.3rem; font-weight: 600; margin-bottom: 1rem; }
+        .hero-content p { max-width: 570px; color: #cbd5e1; line-height: 1.8; }
+        .btn { border-radius: 999px; }
+        .btn-primary { background: #6366f1; }
+        .btn-primary:hover { background: #818cf8; }
+        .btn-secondary { border-color: #94a3b8; color: #e2e8f0; }
+        .btn-secondary:hover { color: #312e81; }
+        .code-animation { background: rgba(15,23,42,.76); border: 1px solid rgba(103,232,249,.25); box-shadow: 0 25px 80px rgba(0,0,0,.25); }
+        .code-line { color: #c4b5fd; }
+        .code-line:nth-child(2), .code-line:nth-child(4) { color: #67e8f9; }
+        .code-line:nth-child(3) { color: #fbbf24; }
+        section { padding: 105px 0; }
+        section::before { background: #fff; }
+        section:nth-child(even)::before { background: #f8fafc; }
+        h2 { font-family: 'Space Grotesk', sans-serif; letter-spacing: -.04em; }
+        .section-label { display: block; text-align: center; color: var(--accent); font-size: .8rem; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; margin-bottom: .7rem; }
+        .about-content { grid-template-columns: 1.7fr 1fr; }
+        .about-text p { color: var(--muted); line-height: 1.85; }
+        .about-image { text-align: center; }
+        .about-image img { max-width: 230px; border-radius: 50%; border: 8px solid #eef2ff; }
+        .stats { gap: 1rem; }
+        .stat { padding: 1rem; border: 1px solid var(--line); border-radius: 14px; background: #fff; }
+        .stat h3 { font-family: 'Space Grotesk', sans-serif; }
+        .skill-category, .project-card { border: 1px solid var(--line); box-shadow: 0 12px 32px rgba(15,23,42,.06); }
+        .skill-category:hover, .project-card:hover { box-shadow: 0 20px 45px rgba(79,70,229,.12); }
+        .skill-item { background: #f8fafc; }
+        .skill-item i { color: var(--accent); }
+        .project-image { height: 130px; display: grid; place-items: center; background: linear-gradient(135deg, #e0e7ff, #cffafe); }
+        .project-image i { font-size: 3rem; color: #4338ca; }
+        .project-content { padding: 1.5rem; }
+        .project-content p { min-height: 76px; }
+        .project-links .btn { padding: 8px 14px; }
+        .contact-content { grid-template-columns: 1fr; max-width: 760px; margin: auto; text-align: center; }
+        .contact-info p { max-width: 570px; margin: 0 auto 2rem; }
+        .contact-details, .social-links { justify-content: center; }
+        .contact-item { justify-content: center; }
+        .contact-form { display: none; }
+        .social-link { border: 1px solid var(--line); }
+        .footer { background: #0f172a; }
+        @media (max-width: 768px) { .hero { padding-top: 125px; } .about-content { grid-template-columns: 1fr; } .about-image { order: -1; } }
+    </style>
 </head>
 <body>
     <nav class="navbar">
         <div class="nav-container">
-            <div class="nav-logo">Huynh Nhat Linh</div>
+            <div class="nav-logo">LingDev03<span style="color:#4f46e5">.</span></div>
             <ul class="nav-menu">
                 <li><a href="#about">About</a></li>
                 <li><a href="#skills">Skills</a></li>
                 <li><a href="#projects">Projects</a></li>
                 <li><a href="#contact">Contact</a></li>
             </ul>
-            <div class="hamburger">
-                <span class="bar"></span>
-                <span class="bar"></span>
-                <span class="bar"></span>
-            </div>
+            <div class="hamburger" aria-label="Mở menu"><span class="bar"></span><span class="bar"></span><span class="bar"></span></div>
         </div>
     </nav>
 
     <section id="hero" class="hero">
         <div class="hero-container">
             <div class="hero-content">
-                <h1>Hi, I'm <span class="highlight">Huynh Nhat Linh</span></h1>
-                <h2>Junior Back-End Developer</h2>
-                <p>Passionate about building robust and scalable server-side applications</p>
+                <span class="eyebrow">Hello, I'm</span>
+                <h1>Huynh Nhat <span class="highlight">Linh</span></h1>
+                <h2>Full Stack &amp; Java Backend Developer</h2>
+                <p>Mình xây dựng các hệ thống backend ổn định, API dễ mở rộng và những sản phẩm web giải quyết vấn đề thực tế — từ authentication, automation đến các công cụ dành cho developer.</p>
                 <div class="hero-buttons">
-                    <a href="#projects" class="btn btn-primary">View My Work</a>
-                    <a href="#contact" class="btn btn-secondary">Get In Touch</a>
+                    <a href="#projects" class="btn btn-primary">Xem dự án <i class="fas fa-arrow-down"></i></a>
+                    <a href="mailto:huynhnhatlinh1206@gmail.com" class="btn btn-secondary">Liên hệ với mình</a>
                 </div>
             </div>
-            <div class="hero-image">
+            <div class="hero-image" aria-label="Developer code snippet">
                 <div class="code-animation">
                     <div class="code-line">const developer = {</div>
-                    <div class="code-line indent">name: 'Huynh Nhat Linh',</div>
-                    <div class="code-line indent">role: 'Back-End Developer',</div>
-                    <div class="code-line indent">passionate: true</div>
+                    <div class="code-line indent">focus: 'Backend &amp; Security',</div>
+                    <div class="code-line indent">stack: ['Java', 'Python', 'TypeScript'],</div>
+                    <div class="code-line indent">learning: true</div>
                     <div class="code-line">};</div>
                 </div>
             </div>
@@ -51,241 +106,43 @@
 
     <section id="about" class="about">
         <div class="container">
-            <h2>About Me</h2>
+            <span class="section-label">Giới thiệu</span><h2>Đôi nét về mình</h2>
             <div class="about-content">
                 <div class="about-text">
-                    <p>I'm a junior back-end developer with a passion for creating efficient and scalable server-side solutions. I enjoy working with various technologies and frameworks to build robust applications that power the digital world.</p>
-                    <p>My journey in back-end development started with curiosity about how things work behind the scenes. I'm constantly learning and improving my skills to deliver high-quality code and solutions.</p>
-                    <div class="stats">
-                        <div class="stat">
-                            <h3>6+</h3>
-                            <p>Months Experience</p>
-                        </div>
-                        <div class="stat">
-                            <h3>5+</h3>
-                            <p>Projects Completed</p>
-                        </div>
-                        <div class="stat">
-                            <h3>3+</h3>
-                            <p>Technologies Learned</p>
-                        </div>
-                    </div>
+                    <p>Mình là <strong>Huynh Nhat Linh</strong>, developer tại Thành phố Hồ Chí Minh. Hiện mình tập trung phát triển các hệ thống enterprise với Java, Spring Boot/Jakarta EE, authentication và kiến trúc event-driven.</p>
+                    <p>Bên cạnh công việc backend, mình thích khám phá security, reverse engineering, AI-assisted development và biến những ý tưởng nhỏ thành sản phẩm có thể sử dụng được.</p>
+                    <div class="stats"><div class="stat"><h3>14+</h3><p>Public repositories</p></div><div class="stat"><h3>3</h3><p>Ngôn ngữ chính</p></div><div class="stat"><h3>∞</h3><p>Luôn học hỏi</p></div></div>
                 </div>
-                <div class="about-image">
-                    <img src="https://via.placeholder.com/400x400/4f46e5/ffffff?text=Your+Photo" alt="Your Photo">
-                </div>
+                <div class="about-image"><img src="https://avatars.githubusercontent.com/u/204983008?v=4" alt="Huynh Nhat Linh"></div>
             </div>
         </div>
     </section>
 
     <section id="skills" class="skills">
-        <div class="container">
-            <h2>Skills & Technologies</h2>
+        <div class="container"><span class="section-label">Tech stack</span><h2>Công nghệ mình sử dụng</h2>
             <div class="skills-grid">
-                <div class="skill-category">
-                    <h3>Languages</h3>
-                    <div class="skill-items">
-                        <div class="skill-item">
-                            <i class="fab fa-python"></i>
-                            <span>Python</span>
-                        </div>
-                        <div class="skill-item">
-                            <i class="fab fa-js-square"></i>
-                            <span>JavaScript</span>
-                        </div>
-                        <div class="skill-item">
-                            <i class="fab fa-java"></i>
-                            <span>Java</span>
-                        </div>
-                        <div class="skill-item">
-                            <i class="fab fa-php"></i>
-                            <span>PHP</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="skill-category">
-                    <h3>Frameworks</h3>
-                    <div class="skill-items">
-                        <div class="skill-item">
-                            <i class="fab fa-node-js"></i>
-                            <span>Node.js</span>
-                        </div>
-                        <div class="skill-item">
-                            <i class="fab fa-react"></i>
-                            <span>Express.js</span>
-                        </div>
-                        <div class="skill-item">
-                            <i class="fab fa-python"></i>
-                            <span>Django</span>
-                        </div>
-                        <div class="skill-item">
-                            <i class="fab fa-java"></i>
-                            <span>Spring Boot</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="skill-category">
-                    <h3>Databases</h3>
-                    <div class="skill-items">
-                        <div class="skill-item">
-                            <i class="fas fa-database"></i>
-                            <span>MySQL</span>
-                        </div>
-                        <div class="skill-item">
-                            <i class="fas fa-database"></i>
-                            <span>PostgreSQL</span>
-                        </div>
-                        <div class="skill-item">
-                            <i class="fas fa-database"></i>
-                            <span>MongoDB</span>
-                        </div>
-                        <div class="skill-item">
-                            <i class="fas fa-database"></i>
-                            <span>Redis</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="skill-category">
-                    <h3>Tools & Others</h3>
-                    <div class="skill-items">
-                        <div class="skill-item">
-                            <i class="fab fa-git-alt"></i>
-                            <span>Git</span>
-                        </div>
-                        <div class="skill-item">
-                            <i class="fab fa-docker"></i>
-                            <span>Docker</span>
-                        </div>
-                        <div class="skill-item">
-                            <i class="fas fa-server"></i>
-                            <span>REST APIs</span>
-                        </div>
-                        <div class="skill-item">
-                            <i class="fas fa-cloud"></i>
-                            <span>AWS</span>
-                        </div>
-                    </div>
-                </div>
+                <div class="skill-category"><h3>Backend</h3><div class="skill-items"><div class="skill-item"><i class="fab fa-java"></i><span>Java / Spring Boot</span></div><div class="skill-item"><i class="fab fa-python"></i><span>Python</span></div><div class="skill-item"><i class="fas fa-server"></i><span>REST APIs</span></div><div class="skill-item"><i class="fas fa-shield-halved"></i><span>OAuth / WebAuthn</span></div></div></div>
+                <div class="skill-category"><h3>Web &amp; Extension</h3><div class="skill-items"><div class="skill-item"><i class="fab fa-js-square"></i><span>JavaScript</span></div><div class="skill-item"><i class="fas fa-code"></i><span>TypeScript</span></div><div class="skill-item"><i class="fab fa-html5"></i><span>HTML / CSS</span></div><div class="skill-item"><i class="fas fa-puzzle-piece"></i><span>Browser Extensions</span></div></div></div>
+                <div class="skill-category"><h3>Data &amp; Architecture</h3><div class="skill-items"><div class="skill-item"><i class="fas fa-database"></i><span>MySQL / PostgreSQL</span></div><div class="skill-item"><i class="fas fa-bolt"></i><span>Redis / Elasticsearch</span></div><div class="skill-item"><i class="fas fa-diagram-project"></i><span>Kafka / MQTT</span></div><div class="skill-item"><i class="fab fa-git-alt"></i><span>Git &amp; CI/CD</span></div></div></div>
             </div>
         </div>
     </section>
 
     <section id="projects" class="projects">
-        <div class="container">
-            <h2>My Projects</h2>
+        <div class="container"><span class="section-label">Selected work</span><h2>Dự án nổi bật</h2>
             <div class="projects-grid">
-                <div class="project-card">
-                    <div class="project-image">
-                        <img src="https://via.placeholder.com/400x250/10b981/ffffff?text=E-commerce+API" alt="E-commerce API">
-                    </div>
-                    <div class="project-content">
-                        <h3>E-commerce REST API</h3>
-                        <p>A comprehensive REST API for an e-commerce platform built with Node.js and Express.js. Features include user authentication, product management, shopping cart, and order processing.</p>
-                        <div class="project-tech">
-                            <span>Node.js</span>
-                            <span>Express.js</span>
-                            <span>MongoDB</span>
-                            <span>JWT</span>
-                        </div>
-                        <div class="project-links">
-                            <a href="#" class="btn btn-small">View Code</a>
-                            <a href="#" class="btn btn-small btn-outline">Live Demo</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="project-card">
-                    <div class="project-image">
-                        <img src="https://via.placeholder.com/400x250/3b82f6/ffffff?text=Task+Manager" alt="Task Manager">
-                    </div>
-                    <div class="project-content">
-                        <h3>Task Management System</h3>
-                        <p>A full-stack task management application with user authentication, task creation, assignment, and progress tracking. Built with Django and PostgreSQL.</p>
-                        <div class="project-tech">
-                            <span>Python</span>
-                            <span>Django</span>
-                            <span>PostgreSQL</span>
-                            <span>Bootstrap</span>
-                        </div>
-                        <div class="project-links">
-                            <a href="#" class="btn btn-small">View Code</a>
-                            <a href="#" class="btn btn-small btn-outline">Live Demo</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="project-card">
-                    <div class="project-image">
-                        <img src="https://via.placeholder.com/400x250/8b5cf6/ffffff?text=Blog+Platform" alt="Blog Platform">
-                    </div>
-                    <div class="project-content">
-                        <h3>Blog Platform API</h3>
-                        <p>A RESTful API for a blogging platform with features like user registration, post creation, commenting system, and admin panel. Implemented with Spring Boot and MySQL.</p>
-                        <div class="project-tech">
-                            <span>Java</span>
-                            <span>Spring Boot</span>
-                            <span>MySQL</span>
-                            <span>Hibernate</span>
-                        </div>
-                        <div class="project-links">
-                            <a href="#" class="btn btn-small">View Code</a>
-                            <a href="#" class="btn btn-small btn-outline">Live Demo</a>
-                        </div>
-                    </div>
-                </div>
+                <div class="project-card"><div class="project-image"><i class="fas fa-fingerprint"></i></div><div class="project-content"><h3>eShape</h3><p>Công cụ Python tập trung vào xử lý dữ liệu và xây dựng giải pháp thực tế bằng automation.</p><div class="project-tech"><span>Python</span><span>Data</span></div><div class="project-links"><a href="https://github.com/LingDev03/eShape" target="_blank" rel="noopener" class="btn btn-small">View Code <i class="fab fa-github"></i></a></div></div></div>
+                <div class="project-card"><div class="project-image"><i class="fas fa-users-viewfinder"></i></div><div class="project-content"><h3>Scan JD</h3><p>Ứng dụng Python hỗ trợ quét và phân tích thông tin job description, giúp tối ưu quy trình tìm việc.</p><div class="project-tech"><span>Python</span><span>Automation</span></div><div class="project-links"><a href="https://github.com/LingDev03/Scan-JD" target="_blank" rel="noopener" class="btn btn-small">View Code <i class="fab fa-github"></i></a></div></div></div>
+                <div class="project-card"><div class="project-image"><i class="fas fa-puzzle-piece"></i></div><div class="project-content"><h3>Scan Facebook Groups</h3><p>Browser extension hỗ trợ thu thập và xử lý thông tin từ các group Facebook.</p><div class="project-tech"><span>TypeScript</span><span>Extension</span></div><div class="project-links"><a href="https://github.com/LingDev03/scan-group-facebook-extension" target="_blank" rel="noopener" class="btn btn-small">View Code <i class="fab fa-github"></i></a></div></div></div>
+                <div class="project-card"><div class="project-image"><i class="fas fa-calendar-days"></i></div><div class="project-content"><h3>World Cup 2026 Calendar</h3><p>Lịch thi đấu World Cup 2026 được xây dựng bằng JavaScript với giao diện web trực quan.</p><div class="project-tech"><span>JavaScript</span><span>HTML/CSS</span></div><div class="project-links"><a href="https://github.com/LingDev03/wc-2026-calender" target="_blank" rel="noopener" class="btn btn-small">View Code <i class="fab fa-github"></i></a></div></div></div>
+                <div class="project-card"><div class="project-image"><i class="fas fa-book-open"></i></div><div class="project-content"><h3>TruyenDrive</h3><p>Biến Google Drive thành một web đọc truyện — một sản phẩm web thú vị và thực tế.</p><div class="project-tech"><span>Web</span><span>Google Drive</span></div><div class="project-links"><a href="https://github.com/LingDev03/truyendrive" target="_blank" rel="noopener" class="btn btn-small">View Code <i class="fab fa-github"></i></a></div></div></div>
+                <div class="project-card"><div class="project-image"><i class="fas fa-flag"></i></div><div class="project-content"><h3>CTF Notes</h3><p>Tổng hợp kiến thức và write-up về Web, Reverse Engineering, mã hóa và forensic.</p><div class="project-tech"><span>Security</span><span>CTF</span></div><div class="project-links"><a href="https://github.com/LingDev03/CTF" target="_blank" rel="noopener" class="btn btn-small">View Code <i class="fab fa-github"></i></a></div></div></div>
             </div>
         </div>
     </section>
 
-    <section id="contact" class="contact">
-        <div class="container">
-            <h2>Get In Touch</h2>
-            <div class="contact-content">
-                <div class="contact-info">
-                    <p>I'm always interested in new opportunities and collaborations. Feel free to reach out!</p>
-                    <div class="contact-details">
-                        <div class="contact-item">
-                            <i class="fas fa-envelope"></i>
-                            <span>huynhnhatlinh1206@gmail.com</span>
-                        </div>
-                        <div class="contact-item">
-                            <i class="fas fa-phone"></i>
-                            <span>+1 (555) 123-4567</span>
-                        </div>
-                        <div class="contact-item">
-                            <i class="fas fa-map-marker-alt"></i>
-                            <span>Ho Chi Minh City, Vietnam</span>
-                        </div>
-                    </div>
-                    <div class="social-links">
-                        <a href="#" class="social-link"><i class="fab fa-github"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
-                    </div>
-                </div>
-                <form class="contact-form">
-                    <div class="form-group">
-                        <input type="text" placeholder="Huynh Nhat Linh" required>
-                    </div>
-                    <div class="form-group">
-                        <input type="email" placeholder="Your Email" required>
-                    </div>
-                    <div class="form-group">
-                        <input type="text" placeholder="Subject" required>
-                    </div>
-                    <div class="form-group">
-                        <textarea placeholder="Your Message" rows="5" required></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Send Message</button>
-                </form>
-            </div>
-        </div>
-    </section>
-
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; 2026 Linh-Hn. All rights reserved.</p>
-        </div>
-    </footer>
-
+    <section id="contact" class="contact"><div class="container"><span class="section-label">Let's connect</span><h2>Cùng xây dựng điều gì đó nhé</h2><div class="contact-content"><div class="contact-info"><p>Mình luôn sẵn sàng trao đổi về backend, security, automation và những ý tưởng sản phẩm mới.</p><div class="contact-details"><div class="contact-item"><i class="fas fa-envelope"></i><a href="mailto:huynhnhatlinh1206@gmail.com">huynhnhatlinh1206@gmail.com</a></div><div class="contact-item"><i class="fas fa-location-dot"></i><span>Ho Chi Minh City, Vietnam</span></div></div><div class="social-links"><a href="https://github.com/LingDev03" target="_blank" rel="noopener" class="social-link" aria-label="GitHub"><i class="fab fa-github"></i></a><a href="mailto:huynhnhatlinh1206@gmail.com" class="social-link" aria-label="Email"><i class="fas fa-envelope"></i></a></div></div></div></div></section>
+    <footer class="footer"><div class="container"><p>&copy; 2026 Huynh Nhat Linh · Built with curiosity and code.</p></div></footer>
     <script src="style/script.js"></script>
 </body>
 </html>
